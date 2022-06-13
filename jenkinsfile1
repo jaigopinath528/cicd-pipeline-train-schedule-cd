@@ -14,14 +14,27 @@ pipeline {
             }
             steps {
                 script {
-                    app = docker.build("jaigopinath528/train-schedule")
+                    app = docker.build("jaigopinath528/train-schedule-master")
                     app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
                 }
             }
         }
-        stage('Push Docker Image') {
+        stage('Build Docker Image for dev') {
+            when {
+                branch 'dev'
+            }
+            steps {
+                script {
+                    app = docker.build("jaigopinath528/train-schedule-dev")
+                    app.inside {
+                        sh 'echo $(curl localhost:8080)'
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image with prod') {
             when {
                 branch 'master'
             }
@@ -35,7 +48,7 @@ pipeline {
                 }
             }
         }
-        stage('Push Docker Image') {
+        stage('Push Docker Image with dev') {
             when {
                 branch 'dev'
             }
